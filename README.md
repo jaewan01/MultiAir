@@ -53,5 +53,5 @@ _evaluation.py_ evaluates AIRTIME, with following key parameters:
 * [model_name]: name of the checkpoint to evaluate
 * [gpus]: specify the GPUs to use
 * [prev_len]: previous length for normalization method
-* [input_dim]: length of input image sequence
+* [input_dim]: length of input time-series sequence
 * [output_dim]: maximum lead time
