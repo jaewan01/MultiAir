@@ -1,5 +1,5 @@
 # AIRTIME
-This is the official implementation of __AIRTIME__ (AIR pollution nowcasting based on Time series and satellite Image Multimodal model for Extreme air pollution), which is described in the following paper:
+This is the official implementation of __MultiAir__ (Multi-modal model based on time series and satellite images for Air pollution nowcasting in extreme case), which is described in the following paper:
 * __Air Pollution Nowcasting via Multimodal Learning with Temporal and Visual Data__
 <br> Sojeong Kim\*, Jaewan Chun\*, Jongha Lee\*, Sung-Chul Hong, Jae-Bum Lee, Seung-Hee Eun, Yonghee Lee, and Kijung Shin
 
@@ -16,7 +16,8 @@ TODO
 * pyproj
 
 ## How to run AIRTIME
-With all the dependencies installed, you can run AIRTIME by running 
+Carefully read readme.txt in the data folder, and complete the required process.
+After that, with all the dependencies are installed, you can run MultiAir by running 
 ```
 bash run.sh
 ```
