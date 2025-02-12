@@ -1,5 +1,6 @@
 In this file, we explain the format of the data for MultiAir
-**NOTE** all of the data we provide are randomly generated to help the understanding of the format. For details on the data please refer to our paper.
+*Note1: all of the data we provide are randomly generated to help the understanding of the format. For details on the data please refer to our paper.
+*Note2: please unpack ground_obs.tar.gz and satellite_image.tar.gz to use
 
 train_time.txt, test_time.txt:
 List of training time and test time in order. 
