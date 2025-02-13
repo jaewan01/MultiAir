@@ -4,7 +4,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from dataset import Air_with_fixed_Sat_Dataset
-from model import AIRTIME
+from model import MultiAir
 
 from pyproj import Proj
 import pandas as pd
@@ -93,7 +93,7 @@ def evaluation(args):
     
 
     criterion = torch.nn.MSELoss()
-    model = AIRTIME(input_dim = input_dim, lats = lats, lons = lons, feat_dim=feat_dim, hidden_dim=args.hidden_dim, pm25_mean=pm25_mean, pm25_std=pm25_std, output_dim = output_dim, prev_len=args.prev_len, korea_stn_num=korea_stn_num, china_stn_num=china_stn_num).to(args.default_device)
+    model = MultiAir(input_dim = input_dim, lats = lats, lons = lons, feat_dim=feat_dim, hidden_dim=args.hidden_dim, pm25_mean=pm25_mean, pm25_std=pm25_std, output_dim = output_dim, prev_len=args.prev_len, korea_stn_num=korea_stn_num, china_stn_num=china_stn_num).to(args.default_device)
     model = torch.nn.DataParallel(model, device_ids=args.all_devices, output_device=args.default_device)
 
     model.load_state_dict(torch.load(f'check_points/{args.model_name}.pkt'))
@@ -132,7 +132,7 @@ def evaluation(args):
 
     gt_vals = []
     gt_masks = []
-    asoc_vals = []
+    model_vals = []
     times = []
 
     f_log = open("logs/test_"+args.model_name+".log", "a")
@@ -157,7 +157,7 @@ def evaluation(args):
         valid_norm_diff_abs_sum_p = 0
 
         valid_vals_gt = []
-        valid_vals_asoc = []
+        valid_vals_model = []
         valid_vals_p = []
         valid_nonzero_entry_cnt = 0
 
@@ -184,7 +184,7 @@ def evaluation(args):
             for i in range(preds.shape[0]):
                 gt_vals.append(pred_vals[i].detach().cpu().numpy())
                 gt_masks.append(pred_mask[i].detach().cpu().numpy())
-                asoc_vals.append(preds[i].detach().cpu().numpy())
+                model_vals.append(preds[i].detach().cpu().numpy())
                 cur_time = raw_times[i,input_dim-1,0].item() * 1000000 + raw_times[i,input_dim-1,1].item() * 10000 + raw_times[i,input_dim-1,2].item() * 100 + raw_times[i,input_dim-1,3].item()
                 times.append(int(cur_time))
 
@@ -218,7 +218,7 @@ def evaluation(args):
             valid_norm_diff_abs_sum_p += torch.abs((valid_nonzero_diffs_p) / pred_vals[nonzero_mask]).sum().item()
 
             valid_vals_gt += pred_vals[pred_mask].tolist()
-            valid_vals_asoc += preds[pred_mask].tolist()
+            valid_vals_model += preds[pred_mask].tolist()
             valid_vals_p += last_PM[pred_mask].tolist()
             
             cur_labels = labels[pred_mask]
@@ -305,14 +305,14 @@ def evaluation(args):
             del preds, labels, feats, masks, pred_classes, pred_vals, raw_times, prev_vals, pred_mask, cur_labels, cur_preds, cur_perst
 
         valid_vals_gt_np = np.array(valid_vals_gt)
-        valid_vals_asoc_np = np.array(valid_vals_asoc)
+        valid_vals_model_np = np.array(valid_vals_model)
         valid_vals_p_np = np.array(valid_vals_p)
 
         nmb_p = np.sum((valid_vals_p_np - valid_vals_gt_np)) / np.sum(valid_vals_gt_np) * 100
         nme_p = np.sum(np.abs(valid_vals_p_np - valid_vals_gt_np)) / np.sum(valid_vals_gt_np) * 100
 
-        nmb = np.sum((valid_vals_asoc_np - valid_vals_gt_np)) / np.sum(valid_vals_gt_np) * 100
-        nme = np.sum(np.abs(valid_vals_asoc_np - valid_vals_gt_np)) / np.sum(valid_vals_gt_np) * 100
+        nmb = np.sum((valid_vals_model_np - valid_vals_gt_np)) / np.sum(valid_vals_gt_np) * 100
+        nme = np.sum(np.abs(valid_vals_model_np - valid_vals_gt_np)) / np.sum(valid_vals_gt_np) * 100
 
         # print results of evaluation
         _RMSE = np.sqrt(_RMSE_np / valid_count)
@@ -327,13 +327,13 @@ def evaluation(args):
         _F1_real = (2 * _TP / (2 * _TP + _FN + _FP))
         _p_F1_real = (2 * p_TP / (2 * p_TP + p_FN + p_FP))
 
-        ASOC_CSI_dict = {'normal':_CSI_real[:output_dim], 'high':_CSI_real[output_dim:2 * output_dim], 'very high':_CSI_real[2 * output_dim:]}
+        model_CSI_dict = {'normal':_CSI_real[:output_dim], 'high':_CSI_real[output_dim:2 * output_dim], 'very high':_CSI_real[2 * output_dim:]}
         persist_CSI_dict = {'normal':_p_CSI_real[:output_dim], 'high':_p_CSI_real[output_dim:2 * output_dim], 'very high':_p_CSI_real[2 * output_dim:]}
-        ASOC_F1_dict = {'normal':_F1_real[:output_dim], 'high':_F1_real[output_dim:2 * output_dim], 'very high':_F1_real[2 * output_dim:]}
+        model_F1_dict = {'normal':_F1_real[:output_dim], 'high':_F1_real[output_dim:2 * output_dim], 'very high':_F1_real[2 * output_dim:]}
         persist_F1_dict = {'normal':_p_F1_real[:output_dim], 'high':_p_F1_real[output_dim:2 * output_dim], 'very high':_p_F1_real[2 * output_dim:]}
 
-        ASOC_RMSE_dict = {'total':_RMSE}
-        ASOC_MAE_dict = {'total':_MAE}
+        model_RMSE_dict = {'total':_RMSE}
+        model_MAE_dict = {'total':_MAE}
         persist_RMSE_dict = {'total':p_RMSE}
         persist_MAE_dict = {'total':p_MAE}
         
@@ -342,26 +342,26 @@ def evaluation(args):
         per_FAR = (per_total_c1 + per_total_c2 + per_total_d1 + per_total_d2) / (per_total_c1+per_total_c2+per_total_c3+per_total_c4+per_total_d1+per_total_d2+per_total_d3+per_total_d4)
         
         valid_vals_gt_np = np.array(valid_vals_gt)
-        valid_vals_asoc_np = np.array(valid_vals_asoc)
+        valid_vals_model_np = np.array(valid_vals_model)
         valid_vals_p_np = np.array(valid_vals_p)
 
         valid_vals_gt_np = valid_vals_gt_np - np.mean(valid_vals_gt_np)
-        valid_vals_asoc_np = valid_vals_asoc_np - np.mean(valid_vals_asoc_np)
+        valid_vals_model_np = valid_vals_model_np - np.mean(valid_vals_model_np)
         valid_vals_p_np = valid_vals_p_np - np.mean(valid_vals_p_np)
 
         ACC = (total_a1 + total_b2 + total_c3 + total_d4) / (total_a1 + total_a2 + total_a3 + total_a4 + total_b1 + total_b2 + total_b3 + total_b4 + total_c1 + total_c2 + total_c3 + total_c4 + total_d1 + total_d2 + total_d3 + total_d4)
         POD = (total_c3 + total_c4 + total_d3 + total_d4) / (total_a3+total_a4+total_b3+total_b4+total_c3+total_c4+total_d3+total_d4)
         FAR = (total_c1 + total_c2 + total_d1 + total_d2) / (total_c1+total_c2+total_c3+total_c4+total_d1+total_d2+total_d3+total_d4)
-        r = np.sum(valid_vals_asoc_np * valid_vals_gt_np) / (np.sqrt(np.sum(valid_vals_asoc_np ** 2)) * np.sqrt(np.sum(valid_vals_gt_np ** 2)))
+        r = np.sum(valid_vals_model_np * valid_vals_gt_np) / (np.sqrt(np.sum(valid_vals_model_np ** 2)) * np.sqrt(np.sum(valid_vals_gt_np ** 2)))
         r_p = np.sum(valid_vals_p_np * valid_vals_gt_np) / (np.sqrt(np.sum(valid_vals_p_np ** 2)) * np.sqrt(np.sum(valid_vals_gt_np ** 2)))
 
-        ASOC_CSI_pd = pd.DataFrame(ASOC_CSI_dict)
+        model_CSI_pd = pd.DataFrame(model_CSI_dict)
         persist_CSI_pd = pd.DataFrame(persist_CSI_dict)
-        ASOC_F1_pd = pd.DataFrame(ASOC_F1_dict)
+        model_F1_pd = pd.DataFrame(model_F1_dict)
         persist_F1_pd = pd.DataFrame(persist_F1_dict)
 
-        ASOC_RMSE_pd = pd.DataFrame(ASOC_RMSE_dict)
-        ASOC_MAE_pd = pd.DataFrame(ASOC_MAE_dict)
+        model_RMSE_pd = pd.DataFrame(model_RMSE_dict)
+        model_MAE_pd = pd.DataFrame(model_MAE_dict)
         persist_RMSE_pd = pd.DataFrame(persist_RMSE_dict)
         persist_MAE_pd = pd.DataFrame(persist_MAE_dict)
 
@@ -389,15 +389,15 @@ def evaluation(args):
         f_log.write('persistance model F1:\n' + persist_F1_pd.to_string() + '\n')
         f_log.write('persistance model RMSE:\n' + persist_RMSE_pd.to_string() + '\n')
         f_log.write('persistance model MAE:\n' + persist_MAE_pd.to_string() + '\n')
-        f_log.write('ASOC model CSI:\n' + ASOC_CSI_pd.to_string() + '\n')
-        f_log.write('ASOC model F1:\n' + ASOC_F1_pd.to_string() + '\n')
-        f_log.write('ASOC model RMSE:\n' + ASOC_RMSE_pd.to_string() + '\n')
-        f_log.write('ASOC model MAE:\n' + ASOC_MAE_pd.to_string() + '\n')
+        f_log.write('MultiAir CSI:\n' + model_CSI_pd.to_string() + '\n')
+        f_log.write('MultiAir F1:\n' + model_F1_pd.to_string() + '\n')
+        f_log.write('MultiAir RMSE:\n' + model_RMSE_pd.to_string() + '\n')
+        f_log.write('MultiAir MAE:\n' + model_MAE_pd.to_string() + '\n')
 
 
 if __name__ == '__main__':
     import argparse
-    parser = argparse.ArgumentParser(description='evaluation (ASOC)')
+    parser = argparse.ArgumentParser(description='evaluation MultiAir')
     parser.add_argument("--batch_size", type=int, default=24,
                         help="number of batch size")
     parser.add_argument("--data_path", type=str, default='data',
