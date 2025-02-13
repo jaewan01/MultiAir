@@ -235,10 +235,10 @@ class SimVP_adv(nn.Module):
         Y = Y.reshape(B, T, C, H, W)
         return Y
 
-class AIRTIME(nn.Module):
+class MultiAir(nn.Module):
     def __init__(self, input_dim=7, lats = None, lons = None, feat_dim=12, hidden_dim=128, pm25_mean=0, pm25_std=0, output_dim = 6, prev_len=100, korea_stn_num=0, china_stn_num=0, normalization_method = "DishTS"):
         """
-        AIRTIME: AIR pollution nowcasting based on Time-series and satellite Image Multi-modal model for Extreme air pollution
+        MultiAir: Multi-modal model based on time series and satellite images for Air pollution nowcasting in extreme cases
 
         :param input_dim: length of time series input
         :param lats,lons: latitude and longitude of stations
@@ -250,7 +250,7 @@ class AIRTIME(nn.Module):
         :param korea_stn_num,china_stn_num: number of stations in Korea and China
         :param normalization_method: normalization method (RevIN, DishTS, Standard)
         """
-        super(AIRTIME, self).__init__()
+        super(MultiAir, self).__init__()
         self.input_dim = input_dim 
         self.feat_dim = feat_dim 
         self.hidden_dim = hidden_dim
