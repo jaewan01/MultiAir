@@ -40,6 +40,11 @@ _sat_model_img_extract.py_ takes raw satellite images, and generates observation
 * [gpus]: specify the GPUs to use
 * [input_dim]: length of input image sequence
 * [output_dim]: maximum lead time
+To modify the time range of satellite image to use (default 2021.01.01.00 - 2021.03.31.00) please modify
+```
+start_t = datetime(2021, 1, 1, 0, 0)
+end_t = datetime(2021, 3, 31, 23, 0)
+```
 
 _training.py_ trains MultiAir with curriculum learning, with following key parameters:
 * [model_name]: name for current training model
