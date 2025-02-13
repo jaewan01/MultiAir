@@ -92,7 +92,7 @@ if __name__ == '__main__':
     img_model.load_state_dict(load_model)
 
     start_t = datetime(2021, 1, 1, 0, 0)
-    end_t = datetime(2023, 12, 31, 23, 0)
+    end_t = datetime(2021, 3, 31, 23, 0)
 
     os.makedirs(f'{args.sat_data_path}/observation', exist_ok=True)
     os.makedirs(f'{args.sat_data_path}/prediction', exist_ok=True)
