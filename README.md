@@ -1,7 +1,6 @@
 # MultiAir
 This is the official implementation of __MultiAir__ (Multi-modal model based on time series and satellite images for Air pollution nowcasting in extreme case), which is described in the following paper:
 * __Air Pollution Nowcasting via Multimodal Learning with Temporal and Visual Data__
-<br> Sojeong Kim\*, Jaewan Chun\*, Jongha Lee\*, Sung-Chul Hong, Jae-Bum Lee, Seung-Hee Eun, Yonghee Lee, and Kijung Shin
 
 The paper is accessible in the following link:
 * TBD
