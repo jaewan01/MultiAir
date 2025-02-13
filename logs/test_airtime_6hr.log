@@ -1,4 +1,4 @@
-Namespace(all_devices=[0], batch_size=24, data_path='data', default_device=0, feat_dim=12, gpus='0', hidden_dim=128, input_dim=7, model_name='airtime_6hr', output_dim=6, prev_len=7, sat_data_path='data/satellite_image')
+Namespace(all_devices=[0], batch_size=24, data_path='data', default_device=0, feat_dim=12, gpus='0', hidden_dim=128, input_dim=7, model_name='multiair_6hr', output_dim=6, prev_len=7, sat_data_path='data/satellite_image')
 persist total ACC: 0.7597486474044609
 persist total POD: 0.6942802349426568
 persist total FAR: 0.3048813669681059
@@ -49,7 +49,7 @@ persistance model MAE:
 3  5.915155
 4  6.471332
 5  6.918034
-ASOC model CSI:
+MultiAir CSI:
      normal      high  very high
 0  0.822183  0.756452   0.698575
 1  0.786149  0.685637   0.601103
@@ -57,7 +57,7 @@ ASOC model CSI:
 3  0.731618  0.589069   0.471213
 4  0.708280  0.551704   0.418463
 5  0.687646  0.518654   0.369124
-ASOC model F1:
+MultiAir F1:
      normal      high  very high
 0  0.902415  0.861341   0.822543
 1  0.880273  0.813505   0.750861
@@ -65,7 +65,7 @@ ASOC model F1:
 3  0.845011  0.741401   0.640578
 4  0.829232  0.711094   0.590023
 5  0.814918  0.683044   0.539212
-ASOC model RMSE:
+MultiAir RMSE:
       total
 0  3.998413
 1  5.183790
@@ -73,7 +73,7 @@ ASOC model RMSE:
 3  6.885886
 4  7.569859
 5  8.160084
-ASOC model MAE:
+MultiAir MAE:
       total
 0  2.727458
 1  3.439718
