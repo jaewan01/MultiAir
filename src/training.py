@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 import time
 
 from dataset import Air_with_fixed_Sat_Dataset
-from model import AIRTIME
+from model import MultiAir
 
 import random
 from pyproj import Proj
@@ -127,7 +127,7 @@ def train(args):
     valid_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=False, num_workers=5, collate_fn = train_dataset.collate_fn, drop_last=True)
     
     # load model
-    model = AIRTIME(input_dim = input_dim, lats = lats, lons = lons, feat_dim=feat_dim, hidden_dim=args.hidden_dim, pm25_mean=pm25_mean, pm25_std=pm25_std, output_dim = output_dim, prev_len=args.prev_len, korea_stn_num=korea_stn_num, china_stn_num=china_stn_num).to(args.default_device)
+    model = MultiAir(input_dim = input_dim, lats = lats, lons = lons, feat_dim=feat_dim, hidden_dim=args.hidden_dim, pm25_mean=pm25_mean, pm25_std=pm25_std, output_dim = output_dim, prev_len=args.prev_len, korea_stn_num=korea_stn_num, china_stn_num=china_stn_num).to(args.default_device)
     model = torch.nn.DataParallel(model, device_ids=args.all_devices, output_device=args.default_device)
 
     os.makedirs('check_points', exist_ok=True)
@@ -454,7 +454,7 @@ def train(args):
             
 if __name__ == '__main__':
     
-    parser = argparse.ArgumentParser(description='AIRTIME PM2.5 training model')
+    parser = argparse.ArgumentParser(description='MultiAir PM2.5 training model')
     parser.add_argument("--lr", type=float, default=1e-3,
                         help="learning rate")
     parser.add_argument("--weight_decay", type=float, default=0,
