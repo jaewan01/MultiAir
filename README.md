@@ -15,7 +15,7 @@ TODO
 * argparse
 * pyproj
 
-## How to run AIRTIME
+## How to run MultiAir
 Carefully read readme.txt in the data folder, and complete the required process.
 After that, with all the dependencies are installed, you can run MultiAir by running 
 ```
