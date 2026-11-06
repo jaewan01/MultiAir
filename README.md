@@ -1,7 +1,7 @@
 # MultiAir
 This is the official implementation of __MultiAir__ (Multi-modal learning for Air pollution nowcasting), which is described in the following paper:
 * __Air Pollution Nowcasting via Multimodal Learning with Temporal and Visual Data__ (link TBA)
-<br> Sojeong Kim\*, Jaewan Chun\*, Jongha Lee\*, Sung-Chul Hong, Jae-Bum Lee, Seung-Hee Eun, Yonghee Lee, Kijung Shin1
+<br> Sojeong Kim\*, Jaewan Chun\*, Jongha Lee\*, Sung-Chul Hong, Jae-Bum Lee, Seung-Hee Eun, Yonghee Lee, Kijung Shin
 <br> BigData 2026
 
 ## __Overview__
